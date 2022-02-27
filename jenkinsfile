@@ -1,6 +1,6 @@
 pipeline {
   environment {
-    imagename = "gcr.io/basic-342606/busybox"
+    registry = "https://us.gcr.io"
     registryCredential = 'basic-342606'
     dockerImage = ''
   }
@@ -8,33 +8,28 @@ pipeline {
   stages {
     stage('Cloning Git') {
       steps {
-        git([url: 'https://github.com/SIDDHARTHSHARMA2/test.git', branch: 'master')
-
+        git 'https://github.com/SIDDHARTHSHARMA2/test.git'
       }
     }
     stage('Building image') {
       steps{
         script {
-          dockerImage = docker.build imagename
+          dockerImage = docker.build registry + ":$BUILD_NUMBER"
         }
       }
     }
     stage('Deploy Image') {
       steps{
         script {
-          docker.withRegistry( 'https://us.gcr.io', registryCredential ) {
-            dockerImage.push("$BUILD_NUMBER")
-             dockerImage.push('latest')
-
+          docker.withRegistry( '', registryCredential ) {
+            dockerImage.push()
           }
         }
       }
     }
     stage('Remove Unused docker image') {
       steps{
-        sh "docker rmi $imagename:$BUILD_NUMBER"
-         sh "docker rmi $imagename:latest"
-
+        sh "docker rmi $registry:$BUILD_NUMBER"
       }
     }
   }
