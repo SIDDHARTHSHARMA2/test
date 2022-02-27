@@ -1,1 +1,3 @@
-withCredentials([file(credentialsId: 'basic-342606', variable: 'GC_KEY')])
+node{
+ withCredentials([file(credentialsId: 'basic-342606', variable: 'GC_KEY')])
+ }
