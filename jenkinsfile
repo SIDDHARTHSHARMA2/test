@@ -8,5 +8,5 @@ node{
        returnStdout: true
   ).trim()
  echo "Pushing image To GCR"
- sh "docker push us.gcr.io/basic-342606/busybox:1"
+ 
 }
