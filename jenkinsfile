@@ -1,1 +1,1 @@
-withCredentials([file(credentialsId: 'basic-342606', variable: 'GC_KEY')]){
+withCredentials([file(credentialsId: 'basic-342606', variable: 'GC_KEY')])
