@@ -1,3 +1,41 @@
-node{
- withCredentials([file(credentialsId: 'basic-342606', variable: 'GC_KEY')])
- }
+pipeline {
+  environment {
+    imagename = "gcr.io/basic-342606/busybox"
+    registryCredential = 'basic-342606'
+    dockerImage = ''
+  }
+  agent any
+  stages {
+    stage('Cloning Git') {
+      steps {
+        git([url: 'https://github.com/ismailyenigul/hacicenkins.git', branch: 'master')
+
+      }
+    }
+    stage('Building image') {
+      steps{
+        script {
+          dockerImage = docker.build imagename
+        }
+      }
+    }
+    stage('Deploy Image') {
+      steps{
+        script {
+          docker.withRegistry( 'https://us.gcr.io', registryCredential ) {
+            dockerImage.push("$BUILD_NUMBER")
+             dockerImage.push('latest')
+
+          }
+        }
+      }
+    }
+    stage('Remove Unused docker image') {
+      steps{
+        sh "docker rmi $imagename:$BUILD_NUMBER"
+         sh "docker rmi $imagename:latest"
+
+      }
+    }
+  }
+}
